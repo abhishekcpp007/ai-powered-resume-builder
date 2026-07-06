@@ -1,0 +1,33 @@
+Job Title: Full Stack Developer
+
+About the Role
+We are looking for a motivated Full Stack Developer to join our growing engineering team. You
+will work across the stack — building responsive frontend interfaces and designing robust,
+scalable backend services — to ship features our customers rely on every day.
+
+Responsibilities
+- Design, build, and maintain web applications using React/Next.js on the frontend and
+  Python (FastAPI/Django/Flask) or Node.js on the backend.
+- Write clean, well-tested, maintainable code and participate in code reviews.
+- Design and consume RESTful APIs; work with relational databases such as PostgreSQL or MySQL.
+- Collaborate with product and design to translate requirements into technical solutions.
+- Containerize services with Docker and support CI/CD pipelines for reliable deployments.
+- Monitor and troubleshoot production issues; contribute to observability and reliability.
+
+Required Skills
+- Proficiency in JavaScript/TypeScript and at least one modern frontend framework (React,
+  Next.js, or Vue).
+- Solid experience with Python and a backend framework (FastAPI, Django, or Flask).
+- Experience with SQL databases (PostgreSQL/MySQL) and REST API design.
+- Familiarity with Git, Docker, and CI/CD workflows.
+- Understanding of cloud platforms (AWS, GCP, or Azure) is a plus.
+- Strong problem-solving skills and ability to work in an agile, cross-functional team.
+
+Nice to Have
+- Experience with Kubernetes, GraphQL, or microservices architecture.
+- Familiarity with automated testing (Jest, Pytest) and Test-Driven Development.
+- Prior experience deploying applications to Vercel, Railway, or similar platforms.
+
+Qualifications
+- Bachelor's degree in Computer Science, Engineering, or equivalent practical experience.
+- 1+ years of professional software development experience (internships count).
