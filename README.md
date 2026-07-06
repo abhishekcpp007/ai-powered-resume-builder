@@ -2,10 +2,11 @@
 
 Paste a job description, upload your resume (PDF or DOCX), and get an AI-tailored version back —
 rewritten summary, reordered/highlighted skills, JD-aligned experience bullets, a JD match score,
-a diff view showing exactly what changed, and a list of keywords you might be missing. Download
-the result as plain text, DOCX, or PDF.
+an ATS score with tips, a diff view showing exactly what changed, a list of keywords you might be
+missing, and an optional AI-generated cover letter. Download the resume as plain text, DOCX, or
+PDF, and the cover letter as plain text.
 
-**Live demo:** frontend — `<FRONTEND_URL>` · backend — `<BACKEND_URL>` _(filled in after deploy)_
+**Live demo:** frontend — https://ai-powered-resume-builder-frontend-one.vercel.app · backend — https://resume-customizer-backend-production.up.railway.app
 
 ## Tech stack
 
@@ -14,9 +15,9 @@ the result as plain text, DOCX, or PDF.
 | Frontend  | Next.js 14 (App Router), TypeScript, Tailwind CSS |
 | Backend   | Python, FastAPI, Uvicorn/Gunicorn |
 | Resume parsing | `pdfplumber` (PDF), `python-docx` (DOCX) |
-| LLM       | Google Gemini (`gemini-2.0-flash`) via `google-generativeai`, JSON mode |
+| LLM       | Google Gemini (`gemini-2.5-flash`) via `google-generativeai`, JSON mode |
 | Export    | `python-docx` (DOCX), `reportlab` (PDF), plain text |
-| Hosting   | Vercel (frontend), Railway or Render (backend, Docker) |
+| Hosting   | Vercel (frontend), Railway (backend, Docker) |
 
 No database — the API is stateless. Each request parses the uploaded resume, calls the LLM,
 scores the match, computes a diff, and returns everything the frontend needs in one response.
@@ -27,7 +28,7 @@ scores the match, computes a diff, and returns everything the frontend needs in 
 ┌─────────────────────┐        multipart/form-data          ┌──────────────────────────┐
 │                      │  POST /api/tailor                   │                          │
 │  Next.js Frontend    │ ───────────────────────────────▶   │   FastAPI Backend        │
-│  (Vercel)            │   { resume file, job_description }  │   (Railway/Render, Docker)│
+│  (Vercel)            │   { resume file, job_description }  │   (Railway, Docker)      │
 │                      │                                      │                          │
 │  - JdInput           │ ◀───────────────────────────────    │  1. parsing.py           │
 │  - ResumeUpload      │   { match_score, matched_keywords,   │     extract text (PDF/   │
@@ -46,7 +47,7 @@ scores the match, computes a diff, and returns everything the frontend needs in 
 
 ## LLM integration
 
-- Provider/model: **Google Gemini**, `gemini-2.0-flash` (configurable via `GEMINI_MODEL`).
+- Provider/model: **Google Gemini**, `gemini-2.5-flash` (configurable via `GEMINI_MODEL`).
 - Uses Gemini's JSON response mode (`response_mime_type: application/json`) with a system
   prompt (`backend/app/llm.py`) instructing the model to rewrite the summary, reorder/select
   matching skills, rephrase experience bullets toward JD keywords, and report keywords the
@@ -70,6 +71,22 @@ extra dependency) between a heuristically-extracted "original summary" (from a S
 Profile section in the raw resume text) and the LLM's rewritten summary, plus a set-difference on
 skills (added / removed / kept). The frontend's `DiffView` component renders this as inline
 highlighted spans and skill-change pill lists, toggled from the result view.
+
+## ATS score (bonus)
+
+`backend/app/scoring.py::compute_ats_score` scores the **uploaded resume text itself** (independent
+of the JD) against common applicant-tracking-system heuristics: use of strong action verbs,
+presence of quantified/metric bullets (`%`, `$`, multipliers, counts), standard section headers
+(Experience, Education, Skills, etc.), and reasonable overall length. Returns a 0–100 score plus
+short actionable tips (e.g. "add more quantified metrics to your bullets"), rendered next to the
+JD match score.
+
+## Cover letter generator (bonus)
+
+`POST /api/cover-letter` (`backend/app/llm.py::generate_cover_letter`) sends the tailored resume
+plus the JD to Gemini with a dedicated prompt to draft a concise, role-specific cover letter,
+reusing the same anti-hallucination constraints as the resume-tailoring prompt. Available from the
+result view after a resume has been tailored; downloadable as `.txt`.
 
 ## Local setup
 
